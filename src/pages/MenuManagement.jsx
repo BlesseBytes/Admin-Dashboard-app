@@ -166,7 +166,7 @@ export default function MenuManagement() {
         {/* Table */}
         <div className="card overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="min-w-[600px] w-full text-sm">
               <thead className="bg-light dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
                 <tr>
                   <th className="px-6 py-3 text-left text-sm font-semibold">Name</th>
