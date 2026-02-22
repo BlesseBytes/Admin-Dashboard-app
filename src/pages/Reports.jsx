@@ -160,20 +160,20 @@ export default function Reports() {
         {/* Charts Placeholder */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="card p-6">
-            <h2 className="text-lg font-bold mb-6">Revenue Trend</h2>
+            <h2 className="text-lg font-bold mb-6">Coming soon!!!</h2>
             <div className="h-64 bg-light dark:bg-gray-700 rounded-lg flex items-center justify-center">
               <p className="text-gray-500 dark:text-gray-400">Chart visualization would go here</p>
             </div>
           </div>
 
           <div className="card p-6">
-            <h2 className="text-lg font-bold mb-6">Top Menu Items</h2>
+            <h2 className="text-lg font-bold mb-6">Top Drink Items</h2>
             <div className="space-y-3">
               {[
-                { name: 'Grilled Chicken Burger', sales: 145 },
-                { name: 'Margherita Pizza', sales: 128 },
-                { name: 'Caesar Salad', sales: 98 },
-                { name: 'Classic Cheeseburger', sales: 87 },
+                { name: 'Coke',  sales: 14 },
+                { name: 'Spring Water', sales: 12 },
+                { name: 'Classic Beer', sales: 9 },
+                { name: 'Wiskey Shoot', sales: 8 },
               ].map((item, index) => (
                 <div
                   key={index}
@@ -187,6 +187,73 @@ export default function Reports() {
           </div>
         </div>
       </div>
+
+      {/* Charts & Top Menu Items */}
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+  {/* Revenue Trend Card */}
+  <div className="card p-6">
+    <h2 className="text-lg font-bold mb-6">Revenue Trend</h2>
+    <div className="h-64 bg-light dark:bg-gray-700 rounded-lg flex flex-col justify-center items-center p-4">
+      {/* Chart Placeholder */}
+      <div className="w-full h-full flex flex-col justify-center items-center">
+        <p className="text-gray-500 dark:text-gray-400 mb-4">📈 Revenue chart would be displayed here</p>
+        {/* Mini Info Metrics */}
+        <div className="grid grid-cols-2 gap-4 w-full max-w-md">
+          <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg text-center">
+            <p className="text-xs text-gray-600 dark:text-gray-300">Today</p>
+            <p className="font-bold text-green-600 dark:text-green-400">$520</p>
+          </div>
+          <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-center">
+            <p className="text-xs text-gray-600 dark:text-gray-300">This Week</p>
+            <p className="font-bold text-blue-600 dark:text-blue-400">$3,450</p>
+          </div>
+          <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg text-center">
+            <p className="text-xs text-gray-600 dark:text-gray-300">This Month</p>
+            <p className="font-bold text-purple-600 dark:text-purple-400">$12,450</p>
+          </div>
+          <div className="p-3 bg-orange-100 dark:bg-orange-900/30 rounded-lg text-center">
+            <p className="text-xs text-gray-600 dark:text-gray-300">Growth</p>
+            <p className="font-bold text-orange-600 dark:text-orange-400">+12%</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {/* Top Menu Items Card */}
+  <div className="card p-6">
+    <h2 className="text-lg font-bold mb-6">Top Menu Items</h2>
+    <div className="space-y-3">
+      {[
+        { name: 'Grilled Chicken Burger', sales: 145, img: '/images/burger.jpg', ingredients: 'Chicken, Lettuce, Tomato, Cheese' },
+        { name: 'Margherita Pizza', sales: 128, img: '/images/pizza.jpg', ingredients: 'Tomato, Mozzarella, Basil' },
+        { name: 'Caesar Salad', sales: 98, img: '/images/salad.jpg', ingredients: 'Lettuce, Croutons, Parmesan, Caesar Dressing' },
+        { name: 'Classic Cheeseburger', sales: 87, img: '/images/cheeseburger.jpg', ingredients: 'Beef, Cheese, Lettuce, Tomato, Onion' },
+      ].map((item, index) => (
+        <div
+          key={index}
+          className="flex items-center justify-between p-3 bg-light dark:bg-gray-700 rounded-lg hover:shadow-lg transition-all cursor-pointer"
+          onClick={() => alert(`Item: ${item.name}\nIngredients: ${item.ingredients}`)}
+        >
+          <div className="flex items-center gap-3">
+            <img
+              src={item.img}
+              alt={item.name}
+              className="w-12 h-12 object-cover rounded-lg"
+            />
+            <div>
+              <p className="font-medium">{item.name}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{item.ingredients}</p>
+            </div>
+          </div>
+          <span className="font-bold text-blue-600">{item.sales} sales</span>
+        </div>
+      ))}
+    </div>
+  </div>
+
+</div>
 
       {/* Detailed Report Modal */}
       {selectedReport && reportsData[selectedReport] && (
