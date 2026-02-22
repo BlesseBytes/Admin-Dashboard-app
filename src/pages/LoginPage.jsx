@@ -31,10 +31,25 @@ export default function LoginPage() {
   const { login, addToast } = useStore()
   const navigate = useNavigate()
 
-  // Get registered users from localStorage
+  // Get registered users from localStorage (with default admin user if none exist)
   const getRegisteredUsers = () => {
     const users = localStorage.getItem('registeredUsers')
-    return users ? JSON.parse(users) : []
+    if (users) {
+      return JSON.parse(users)
+    }
+
+    // Create default admin user if no users exist
+    const defaultAdminUser = {
+      id: 1,
+      fullName: 'Admin User',
+      email: 'admin@example.com',
+      password: 'password123',
+      createdAt: new Date().toISOString(),
+    }
+
+    const defaultUsers = [defaultAdminUser]
+    localStorage.setItem('registeredUsers', JSON.stringify(defaultUsers))
+    return defaultUsers
   }
 
   // Save user to localStorage
@@ -79,10 +94,10 @@ export default function LoginPage() {
         if (user) {
           const loginUser = {
             id: user.id,
-            name: user.fullName,
+            fullName: user.fullName,
             email: user.email,
             role: 'user',
-            avatar: 'https://via.placeholder.com/40',
+            avatar: null,
           }
           login(loginUser)
           addToast('Logged in successfully!', 'success')
@@ -317,39 +332,50 @@ export default function LoginPage() {
               {/* Email */}
               <div>
                 <label className="block text-sm font-medium mb-2">Email Address</label>
-                <div className="relative">
-                  <Mail size={18} className="absolute left-3 top-3 text-gray-400" />
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="input pl-10"
-                    placeholder="admin@example.com"
-                    required
-                  />
+                <div className="flex items-center gap-2">
+                  <Mail size={18} className="text-gray-400 flex-shrink-0" />
+                  <div className="relative flex-1">
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="input pr-10 w-full"
+                      required
+                    />
+                    {email && (
+                      <button
+                        type="button"
+                        onClick={() => setEmail('')}
+                        className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                      >
+                        <X size={18} />
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
 
               {/* Password */}
               <div>
                 <label className="block text-sm font-medium mb-2">Password</label>
-                <div className="relative">
-                  <Lock size={18} className="absolute left-3 top-3 text-gray-400" />
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="input pl-10 pr-10"
-                    placeholder="••••••••"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
+                <div className="flex items-center gap-2">
+                  <Lock size={18} className="text-gray-400 flex-shrink-0" />
+                  <div className="relative flex-1">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="input pr-10 w-full"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -386,78 +412,100 @@ export default function LoginPage() {
               {/* Full Name */}
               <div>
                 <label className="block text-sm font-medium mb-2">Full Name</label>
-                <div className="relative">
-                  <User size={18} className="absolute left-3 top-3 text-gray-400" />
-                  <input
-                    type="text"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    className="input pl-10"
-                    placeholder="John Doe"
-                    required
-                  />
+                <div className="flex items-center gap-2">
+                  <User size={18} className="text-gray-400 flex-shrink-0" />
+                  <div className="relative flex-1">
+                    <input
+                      type="text"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      className="input pr-10 w-full"
+                      required
+                    />
+                    {fullName && (
+                      <button
+                        type="button"
+                        onClick={() => setFullName('')}
+                        className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                      >
+                        <X size={18} />
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
 
               {/* Email */}
               <div>
                 <label className="block text-sm font-medium mb-2">Email Address</label>
-                <div className="relative">
-                  <Mail size={18} className="absolute left-3 top-3 text-gray-400" />
-                  <input
-                    type="email"
-                    value={signupEmail}
-                    onChange={(e) => setSignupEmail(e.target.value)}
-                    className="input pl-10"
-                    placeholder="your@email.com"
-                    required
-                  />
+                <div className="flex items-center gap-2">
+                  <Mail size={18} className="text-gray-400 flex-shrink-0" />
+                  <div className="relative flex-1">
+                    <input
+                      type="email"
+                      value={signupEmail}
+                      onChange={(e) => setSignupEmail(e.target.value)}
+                      className="input pr-10 w-full"
+                      required
+                    />
+                    {signupEmail && (
+                      <button
+                        type="button"
+                        onClick={() => setSignupEmail('')}
+                        className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                      >
+                        <X size={18} />
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
 
               {/* Password */}
               <div>
                 <label className="block text-sm font-medium mb-2">Password</label>
-                <div className="relative">
-                  <Lock size={18} className="absolute left-3 top-3 text-gray-400" />
-                  <input
-                    type={showSignupPassword ? 'text' : 'password'}
-                    value={signupPassword}
-                    onChange={(e) => setSignupPassword(e.target.value)}
-                    className="input pl-10 pr-10"
-                    placeholder="••••••••"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowSignupPassword(!showSignupPassword)}
-                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                  >
-                    {showSignupPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
+                <div className="flex items-center gap-2">
+                  <Lock size={18} className="text-gray-400 flex-shrink-0" />
+                  <div className="relative flex-1">
+                    <input
+                      type={showSignupPassword ? 'text' : 'password'}
+                      value={signupPassword}
+                      onChange={(e) => setSignupPassword(e.target.value)}
+                      className="input pr-10 w-full"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowSignupPassword(!showSignupPassword)}
+                      className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                    >
+                      {showSignupPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
                 </div>
               </div>
 
               {/* Confirm Password */}
               <div>
                 <label className="block text-sm font-medium mb-2">Confirm Password</label>
-                <div className="relative">
-                  <Lock size={18} className="absolute left-3 top-3 text-gray-400" />
-                  <input
-                    type={showSignupConfirmPassword ? 'text' : 'password'}
-                    value={signupConfirmPassword}
-                    onChange={(e) => setSignupConfirmPassword(e.target.value)}
-                    className="input pl-10 pr-10"
-                    placeholder="••••••••"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowSignupConfirmPassword(!showSignupConfirmPassword)}
-                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                  >
-                    {showSignupConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
+                <div className="flex items-center gap-2">
+                  <Lock size={18} className="text-gray-400 flex-shrink-0" />
+                  <div className="relative flex-1">
+                    <input
+                      type={showSignupConfirmPassword ? 'text' : 'password'}
+                      value={signupConfirmPassword}
+                      onChange={(e) => setSignupConfirmPassword(e.target.value)}
+                      className="input pr-10 w-full"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowSignupConfirmPassword(!showSignupConfirmPassword)}
+                      className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                    >
+                      {showSignupConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
                 </div>
               </div>
 

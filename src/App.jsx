@@ -5,6 +5,7 @@ import { useStore } from './store/store'
 // Pages
 import LoginPage from './pages/LoginPage'
 import Dashboard from './pages/Dashboard'
+import UserProfile from './pages/UserProfile'
 import MenuManagement from './pages/MenuManagement'
 import Categories from './pages/Categories'
 import Orders from './pages/Orders'
@@ -39,6 +40,7 @@ function App() {
           <>
             <Route path="/" element={<Dashboard />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profile" element={<UserProfile />} />
             <Route path="/menu" element={<MenuManagement />} />
             <Route path="/categories" element={<Categories />} />
             <Route path="/orders" element={<Orders />} />

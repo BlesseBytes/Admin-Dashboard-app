@@ -16,6 +16,7 @@ export default function Sidebar() {
   const { isSidebarOpen, toggleSidebar, logout } = useStore()
   const location = useLocation()
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
+  console.log('Sidebar rendering with isSidebarOpen:', isSidebarOpen)
 
   const menuItems = [
     { label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },

@@ -1,12 +1,11 @@
 import { useState } from 'react'
 import Layout from '../components/layout'
-import { Eye, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Eye, Trash2, CheckCircle, Clock, X } from 'lucide-react'
 
 export default function Orders() {
   const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 10
-
-  const orders = [
+  const [selectedOrder, setSelectedOrder] = useState(null)
+  const [orders, setOrders] = useState([
     {
       id: 1,
       orderNumber: '#ORD-001',
@@ -52,7 +51,20 @@ export default function Orders() {
       status: 'processing',
       date: '2025-02-15',
     },
-  ]
+  ])
+  const itemsPerPage = 10
+
+  const handleCompleteOrder = (id) => {
+    setOrders(orders.map(order => 
+      order.id === id ? { ...order, status: 'completed' } : order
+    ))
+    setSelectedOrder(null)
+  }
+
+  const handleDeleteOrder = (id) => {
+    setOrders(orders.filter(order => order.id !== id))
+    setSelectedOrder(null)
+  }
 
   const totalPages = Math.ceil(orders.length / itemsPerPage)
   const paginatedOrders = orders.slice(
@@ -113,9 +125,31 @@ export default function Orders() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <button className="p-2 hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-600 rounded-lg transition-colors">
-                        <Eye size={16} />
-                      </button>
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => setSelectedOrder(order)}
+                          className="p-2 hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-600 rounded-lg transition-colors cursor-pointer"
+                          title="View order"
+                        >
+                          <Eye size={16} />
+                        </button>
+                        {order.status !== 'completed' && (
+                          <button
+                            onClick={() => handleCompleteOrder(order.id)}
+                            className="p-2 hover:bg-green-100 dark:hover:bg-green-900/30 text-green-600 rounded-lg transition-colors cursor-pointer"
+                            title="Mark as completed"
+                          >
+                            <CheckCircle size={16} />
+                          </button>
+                        )}
+                        <button
+                          onClick={() => handleDeleteOrder(order.id)}
+                          className="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 rounded-lg transition-colors cursor-pointer"
+                          title="Delete order"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -133,21 +167,83 @@ export default function Orders() {
                 <button
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg disabled:opacity-50 transition-colors"
+                  className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg disabled:opacity-50 transition-colors text-sm font-medium"
                 >
-                  <ChevronLeft size={16} />
+                  Previous
                 </button>
                 <button
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg disabled:opacity-50 transition-colors"
+                  className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg disabled:opacity-50 transition-colors text-sm font-medium"
                 >
-                  <ChevronRight size={16} />
+                  Next
                 </button>
               </div>
             </div>
           )}
         </div>
+
+        {/* Order Details Modal */}
+        {selectedOrder && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-md w-full mx-4">
+              <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+                <h2 className="text-xl font-bold">Order Details</h2>
+                <button
+                  onClick={() => setSelectedOrder(null)}
+                  className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              <div className="p-6 space-y-4">
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Order Number</p>
+                  <p className="text-lg font-semibold">{selectedOrder.orderNumber}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Customer</p>
+                  <p className="text-lg">{selectedOrder.customer}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Items</p>
+                  <p className="text-lg">{selectedOrder.items} items</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Total</p>
+                  <p className="text-2xl font-bold text-blue-600">${selectedOrder.total.toFixed(2)}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Date</p>
+                  <p className="text-lg">{selectedOrder.date}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Status</p>
+                  <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium mt-1 ${getStatusColor(selectedOrder.status)}`}>
+                    {selectedOrder.status}
+                  </span>
+                </div>
+              </div>
+              <div className="flex gap-3 p-6 border-t border-gray-200 dark:border-gray-700">
+                {selectedOrder.status !== 'completed' && (
+                  <button
+                    onClick={() => handleCompleteOrder(selectedOrder.id)}
+                    className="flex-1 flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-medium py-2 rounded-lg transition-colors"
+                  >
+                    <CheckCircle size={16} />
+                    Complete
+                  </button>
+                )}
+                <button
+                  onClick={() => setSelectedOrder(null)}
+                  className="flex-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-medium py-2 rounded-lg transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </Layout>
   )

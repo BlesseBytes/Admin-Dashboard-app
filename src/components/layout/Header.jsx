@@ -1,12 +1,30 @@
 import { useStore } from '../../store/store'
-import { Menu, Moon, Sun, Bell, LogOut, Settings, User } from 'lucide-react'
+import { Menu, Moon, Sun, LogOut, Settings, User } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import NotificationCenter from '../NotificationCenter'
 
 export default function Header() {
   const { isDark, toggleTheme, toggleSidebar, user, logout } = useStore()
   const [showProfileMenu, setShowProfileMenu] = useState(false)
   const navigate = useNavigate()
+
+  const getInitials = (fullName) => {
+    if (!fullName) return 'A'
+    return fullName
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2)
+  }
+
+  const handleMenuClick = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    console.log('Toggle sidebar clicked')
+    toggleSidebar()
+  }
 
   const handleLogout = () => {
     logout()
@@ -19,10 +37,12 @@ export default function Header() {
         {/* Left Side */}
         <div className="flex items-center gap-4">
           <button
-            onClick={toggleSidebar}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            type="button"
+            onClick={handleMenuClick}
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer"
+            aria-label="Toggle sidebar menu"
           >
-            <Menu size={20} />
+            <Menu size={24} />
           </button>
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold">
@@ -37,11 +57,8 @@ export default function Header() {
 
         {/* Right Side */}
         <div className="flex items-center gap-4">
-          {/* Notification */}
-          <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors relative">
-            <Bell size={20} />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-          </button>
+          {/* Notification Center */}
+          <NotificationCenter />
 
           {/* Theme Toggle */}
           <button
@@ -58,18 +75,40 @@ export default function Header() {
               onClick={() => setShowProfileMenu(!showProfileMenu)}
               className="flex items-center gap-2 p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
             >
-              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                {user?.name?.[0] || 'A'}
-              </div>
-              <span className="hidden sm:block text-sm font-medium">{user?.name || 'Admin'}</span>
+              {user?.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt={user.fullName || user.name}
+                  className="w-8 h-8 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                  {getInitials(user?.fullName || user?.name)}
+                </div>
+              )}
+              <span className="hidden sm:block text-sm font-medium">
+                {user?.fullName || user?.name || 'Admin'}
+              </span>
             </button>
 
             {showProfileMenu && (
               <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 rounded-lg shadow-soft-lg border border-gray-200 dark:border-gray-600 py-2 animate-fade-in">
-                <button className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center gap-2 transition-colors">
+                <button
+                  onClick={() => {
+                    navigate('/profile')
+                    setShowProfileMenu(false)
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center gap-2 transition-colors"
+                >
                   <User size={16} /> Profile
                 </button>
-                <button className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center gap-2 transition-colors">
+                <button
+                  onClick={() => {
+                    navigate('/settings')
+                    setShowProfileMenu(false)
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center gap-2 transition-colors"
+                >
                   <Settings size={16} /> Settings
                 </button>
                 <hr className="my-2 dark:border-gray-600" />
